@@ -14,8 +14,8 @@ public class TracerouteConfig
     [Option('s', "packet_size", Default = 5, HelpText = "Set the size of packet to send (in bytes).")]
     public int PacketSize { get; set; }
 
-    [Option('n', "show_dns_names", Default = true, HelpText = "Set false to hide dns names (show only ip values).")]
-    public bool ShowDNSNames { get; set; }
+    [Option('n', "show_only_ip", Default = false, HelpText = "Set to hide dns names.")]
+    public bool HideDnsNames { get; set; }
 
     [Option('w', "wait_time", Default = 120, HelpText = "Set the maximum time to wait for response (in ms).")]
     public int WaitTime { get; set; }

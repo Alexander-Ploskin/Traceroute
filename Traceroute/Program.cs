@@ -55,7 +55,7 @@ static void Run(TracerouteConfig config)
             Console.WriteLine("  Request timed out.");
             continue;
         }
-        if (config.ShowDNSNames)
+        if (!config.HideDnsNames)
         {
             try
             {
