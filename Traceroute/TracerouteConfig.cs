@@ -30,6 +30,11 @@ public static class TracerouteConfigExtenstions
     {
         var config = result.Value;
 
+        if (config == null)
+        {
+            return result;
+        }
+
         if (config.MaxTTL < 1 || config.MaxTTL < config.MinTTL)
         {
             throw new ArgumentException("Bad value for max_ttl");
