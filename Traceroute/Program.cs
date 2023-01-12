@@ -23,52 +23,39 @@ static void Run(TracerouteConfig config)
     Console.WriteLine($"Tracing route to {config.Address} \nover a maximum of {config.MaxTTL} hops.");
     using var pingSender = new Ping();
 
-    var pingCount = 0;
-
     for (var hop = config.MinTTL; hop < config.MaxTTL; ++hop)
     {
         IPAddress? replyAddress = null;
-        
-        for (var attempt = pingCount; attempt < config.MaxHopCount; ++attempt)
+
+        Console.Write($" {hop}");
+        for (var query = 0; query < config.QueriesNumber; ++query)
         {
-            replyAddress = null;
-            pingCount++;
-            Console.Write($" {pingCount}");
-            for (var query = 0; query < config.QueriesNumber; ++query)
+            var stopwatch = Stopwatch.StartNew();
+            var buffer = new byte[config.PacketSize];
+            var reply = pingSender.Send(ipAddress, config.WaitTime, buffer, new PingOptions(hop, true));
+            stopwatch.Stop();
+
+            if (reply.Status == IPStatus.TimedOut)
             {
-                var stopwatch = Stopwatch.StartNew();
-                var buffer = new byte[config.PacketSize];
-                var reply = pingSender.Send(ipAddress, config.WaitTime, buffer, new PingOptions(hop, true));
-                stopwatch.Stop();
-
-                if (reply.Status == IPStatus.TimedOut)
-                {
-                    Console.Write(" *");
-                    continue;
-                }
-                if (reply.Status == IPStatus.DestinationHostUnreachable)
-                {
-                    Console.WriteLine(" The destination host is unreachable");
-                    return;
-                }
-                Console.Write($" {stopwatch.ElapsedMilliseconds} ms");
-                if (replyAddress == null)
-                {
-                    replyAddress = reply.Address;
-                }
+                Console.Write(" *");
+                continue;
             }
-
-            if (replyAddress != null)
+            if (reply.Status == IPStatus.DestinationHostUnreachable)
             {
-                break;
+                Console.WriteLine(" The destination host is unreachable");
+                return;
             }
-
-            Console.WriteLine("  Request timed out.");
+            Console.Write($" {stopwatch.ElapsedMilliseconds} ms");
+            if (replyAddress == null)
+            {
+                replyAddress = reply.Address;
+            }
         }
 
         if (replyAddress == null)
         {
-            break;
+            Console.WriteLine("  Request timed out.");
+            continue;
         }
         if (config.ShowDNSNames)
         {
@@ -77,10 +64,12 @@ static void Run(TracerouteConfig config)
                 var dnsName = Dns.GetHostEntry(replyAddress).HostName;
                 Console.Write($"  {dnsName} [{replyAddress}]");
             }
-            catch (Exception) {
+            catch (Exception)
+            {
                 Console.Write($" {replyAddress}");
             }
-        } else
+        }
+        else
         {
             Console.Write($" {replyAddress}");
         }

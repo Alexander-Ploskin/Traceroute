@@ -11,16 +11,13 @@ public class TracerouteConfig
     [Option('q', "queries_number", Default = 3, HelpText = "Set the number of querries for a hop.")]
     public int QueriesNumber { get; set; }
 
-    [Option('h', "max_hop_count", Default = 30, HelpText = "Set maximum number of hops.")]
-    public int MaxHopCount { get; set; }
-
     [Option('s', "packet_size", Default = 5, HelpText = "Set the size of packet to send (in bytes).")]
     public int PacketSize { get; set; }
 
     [Option('n', "show_dns_names", Default = true, HelpText = "Set false to hide dns names (show only ip values).")]
     public bool ShowDNSNames { get; set; }
 
-    [Option('w', "wait_time", Default = 5000, HelpText = "Set the maximum time to wait for response (in ms).")]
+    [Option('w', "wait_time", Default = 120, HelpText = "Set the maximum time to wait for response (in ms).")]
     public int WaitTime { get; set; }
 
     [Value(0, Required = true, HelpText = "IP address or DNS name to traceroute.")]
@@ -52,10 +49,6 @@ public static class TracerouteConfigExtenstions
         if (config.WaitTime < 1)
         {
             throw new ArgumentException("Bad value for wait_time");
-        }
-        if (config.MaxHopCount < 1)
-        {
-            throw new ArgumentException("Bad value for attempts_count");
         }
 
         return result;

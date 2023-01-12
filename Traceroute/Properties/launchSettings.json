@@ -2,7 +2,7 @@
   "profiles": {
     "Traceroute": {
       "commandName": "Project",
-      "commandLineArgs": "\"google.com\""
+      "commandLineArgs": "\"ya.ru\""
     }
   }
 }
